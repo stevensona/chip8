@@ -1,4 +1,4 @@
-#include <ifstream>
+#include <fstream>
 #include "cpu.h"
 
 cpu::cpu() {}
@@ -50,12 +50,14 @@ void cpu::run() {
             break;
         }
         break;
-      case 0x8:
+      case 0x8: {
         uint8_t x = (instruction & 0x0F00) >> 8;
         uint8_t y = (instruction & 0x00F0) >> 4;
         switch(instruction & 0x000F) {
 
         }
+	break;
+      }
       default:
         //throw exception
         break;
@@ -86,4 +88,9 @@ uint8_t cpu::getWord(uint16_t addr) {
 
 uint16_t cpu::getDWord(uint16_t addr) {
   return (static_cast<uint16_t>(memory[addr]) << 8) | memory[addr + 1];
+}
+
+int main() {
+	cpu one;
+	one.reset();
 }

@@ -23,7 +23,7 @@ private:
   to shift 
   */
   uint8_t stack_pointer; //offset from 0xEA0. acceptable values 0-F
-  void push(uint8_t);
+  void push(uint16_t);
   uint16_t pop();
 
   uint8_t getWord(uint16_t);
