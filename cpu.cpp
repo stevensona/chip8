@@ -39,8 +39,8 @@ void cpu::dumpMemory(const std::ostream &stream) {
 void cpu::run() {
   bool running = true;
   while(running) {
-    uint16_t instruction = (static_cast<uint16_t>memory[pc] << 8) | memory[pc + 1];
-    switch((instruction & 0xF000) >> 12) {
+    uint16_t instruction = getDWord(pc);
+    switch(instruction >> 12) {
       case 0x0:
         switch(instruction & 0xFF) {
           case 0xE0: //TODO clear the screen
@@ -73,9 +73,17 @@ void cpu::push(uint16_t value) {
 }
 
 uint16_t cpu::pop() {
-  uint16_t addr = (static_cast<uint16_t>memory[stack_pointer] << 8) | memory[stack_pointer + 1];
+  uint16_t top = getDWord(stack_pointer);
   stack_pointer -= 2;
   if (stack_pointer > 0x1F) //handle underflow
     stack_pointer = 0x1F;
-  return addr;
+  return top;
+}
+
+uint8_t cpu::getWord(uint16_t addr) {
+  return memory[addr];
+}
+
+uint16_t cpu::getDWord(uint16_t addr) {
+  return (static_cast<uint16_t>(memory[addr]) << 8) | memory[addr + 1];
 }
