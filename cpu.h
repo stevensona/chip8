@@ -26,4 +26,7 @@ private:
   void push(uint8_t);
   uint16_t pop();
 
+  uint8_t getWord(uint16_t);
+  uint16_t getDWord(uint16_t);
+
 };
