@@ -1,3 +1,3 @@
 # chip8
 
-*note: have not actually compiled yet
+simple chip8 emulator written in c++ using SDL.
