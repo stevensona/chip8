@@ -7,7 +7,9 @@ public:
   void reset();   
   void loadProgram(const std::string &filename);
   void run();
-  void dumpMemory(const std::ostream &stream);
+  void step();
+  void dumpMemory(std::ostream &stream);
+  void debugInfo(std::ostream &stream);
 
 private:  
 
