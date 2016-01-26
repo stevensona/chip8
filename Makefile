@@ -1,6 +1,6 @@
 CC=clang++
-CFLAGS=-c -std=c++11
-LDFLAGS=
+CFLAGS=-c -Wall -std=c++11 -v
+LDFLAGS=-lSDL2 -v
 SOURCES=cpu.cpp main.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=chip8
@@ -12,3 +12,6 @@ $(EXECUTABLE): $(OBJECTS)
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm *.o && rm $(EXECUTABLE)

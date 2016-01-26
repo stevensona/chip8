@@ -6,7 +6,7 @@ public:
   cpu();
   void reset();   
   void loadProgram(const std::string &filename);
-  void run();
+  void run(bool debug);
   void step();
   void dumpMemory(std::ostream &stream);
   void debugInfo(std::ostream &stream);
