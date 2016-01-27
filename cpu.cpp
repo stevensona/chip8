@@ -136,8 +136,7 @@ void Cpu::step() {
       v[x] += kk;
       pc += 2;
       break;
-    case 0x8: {
-
+    case 0x8:
       switch(ir & 0xF) {
         case 2:
           cout << hex << "AND V" << d_x << ", V" << d_y << '\n';
@@ -149,7 +148,6 @@ void Cpu::step() {
       }
       pc += 2;
       break;
-    }
     case 0xA: 
       cout << hex << "LD I, " << d_nnn << '\n';
       I = nnn;
