@@ -6,17 +6,19 @@
 
 int main(int argc, char** argv) {
 
+  bool display[2048];
+
   if(SDL_Init(SDL_INIT_VIDEO) != 0) {
     std::cout << "SDL_Init error: " << SDL_GetError() << '\n';
     return -1;
   }
   SDL_Quit();
 
-  cpu chip8;
+  Cpu chip8;
   if (argc < 2) {
     std::cout << "no input file specified\n";
     return -1;
   }
   chip8.loadProgram(std::string(argv[1]));
-  chip8.run(true);
+  chip8.run(false);
 }
