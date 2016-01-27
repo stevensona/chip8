@@ -61,7 +61,6 @@ void Cpu::dumpMemory(ostream &stream) {
   //TODO
 }
 
-//better name?
 void Cpu::dumpRegisters(ostream &stream) {
   stream << "pc: " << pc << ' ';
   stream << "ir: " << ir << ' ';
@@ -80,6 +79,7 @@ void Cpu::decode_failure(uint16_t instruction) {
 
 void Cpu::step() {
   ir = get_dword(pc);
+  
   cout << hex << setw(4) << pc << ' ' << setw(4) << ir << ' ';
   switch(ir >> 12) {
     case 0x0:
@@ -89,8 +89,8 @@ void Cpu::step() {
           pc += 2;
           break;
         case 0xEE:
-          pc = pop();
           cout << hex << "RET\n";
+          pc = pop();
           break;
         default:
           decode_failure(ir);
@@ -107,24 +107,20 @@ void Cpu::step() {
       pc = ir & 0xFFF;
       break;
     case 0x3:
-      cout << hex << "SE V" << ((ir & 0xFFF) >> 8) <<
-        ", " << (ir & 0xFF) << '\n';
+      cout << hex << "SE V" << ((ir & 0xFFF) >> 8) << ", " << (ir & 0xFF) << '\n';
       pc += ((ir & 0xFF) == v[(ir & 0xFFF) >> 8]) ? 4 : 2;
       break;
     case 0x4:
-      cout << hex << "SNE V" << ((ir & 0xFFF) >> 8) <<
-        ", " << (ir & 0xFF) << '\n';
+      cout << hex << "SNE V" << ((ir & 0xFFF) >> 8) << ", " << (ir & 0xFF) << '\n';
       pc += ((ir & 0xFF) == v[(ir & 0xFFF) >> 8]) ? 2 : 4;
       break;
     case 0x6: 
-      cout << hex << "LD V" << ((ir & 0xFFF) >> 8) <<
-        ", " << (ir & 0xFF) << '\n';
+      cout << hex << "LD V" << ((ir & 0xFFF) >> 8) << ", " << (ir & 0xFF) << '\n';
       v[(ir & 0xFFF) >> 8] = ir & 0xFF;
       pc += 2;
       break;
     case 0x7:
-      cout << hex << "ADD V" << ((ir & 0xFFF) >> 8) <<
-        ", " << (ir & 0xFF) << '\n';
+      cout << hex << "ADD V" << ((ir & 0xFFF) >> 8) << ", " << (ir & 0xFF) << '\n';
       v[(ir & 0xFFF) >> 8] += ir & 0xFF;
       pc += 2;
       break;
@@ -133,8 +129,7 @@ void Cpu::step() {
       uint8_t y = (ir & 0x00F0) >> 4;
       switch(ir & 0xF) {
         case 2:
-          cout << hex << "AND V" << ((ir & 0xFFF) >> 8) <<
-            ", V" << ((ir & 0xFF) >> 4) << '\n';
+          cout << hex << "AND V" << ((ir & 0xFFF) >> 8) << ", V" << ((ir & 0xFF) >> 4) << '\n';
           v[(ir & 0xFFF) >> 8] = v[(ir & 0xFFF) >> 8] & v[(ir & 0xFF) >> 4];
           break;
         default:
