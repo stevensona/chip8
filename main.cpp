@@ -19,5 +19,5 @@ int main(int argc, char** argv) {
     return -1;
   }
   chip8.loadProgram(std::string(argv[1]));
-  chip8.run(false);
+  chip8.run();
 }

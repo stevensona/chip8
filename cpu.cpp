@@ -56,19 +56,19 @@ void Cpu::loadProgram(const string& filename) {
   ifs.close();
 }
 
-void Cpu::dumpMemory(ostream &stream) {
+void Cpu::dumpMemory() {
   //for(auto w = 0; w < )
   //TODO
 }
 
-void Cpu::dumpRegisters(ostream &stream) {
-  stream << "pc: " << pc << ' ';
-  stream << "ir: " << ir << ' ';
-  stream << "I: " << I << '\n';
+void Cpu::dumpRegisters() {
+  cout << "pc: " << pc << ' ';
+  cout << "ir: " << ir << ' ';
+  cout << "I: " << I << '\n';
   for(auto i = 0; i < REGISTER_COUNT; i++) {
-    stream  << "v" << i << ": " << setw(4) << static_cast<uint16_t>(v[i]) << '\n';
+    cout  << "v" << i << ": " << setw(4) << static_cast<uint16_t>(v[i]) << '\n';
   }
-  stream << endl;
+  cout << endl;
 }
 
 void Cpu::decode_failure(uint16_t instruction) {
@@ -97,7 +97,7 @@ void Cpu::step() {
     case 0x0:
       switch(kk) {
         case 0xE0: //TODO clear the screen
-          cout << hex << "***(TODO) CLS\n";
+          cout << hex << "CLS * * * * * TODO\n";
           pc += 2;
           break;
         case 0xEE:
@@ -157,7 +157,7 @@ void Cpu::step() {
       break;
     case 0xD:
       //TODO draw a sprite
-      cout << hex << "***(TODO) DRW\n";
+      cout << hex << "DRW * * * * * TODO\n";
       pc += 2;
       break;
     case 0xF:
@@ -167,7 +167,7 @@ void Cpu::step() {
           I = Vx * 5;
           break;
         case 0x55:
-          cout << hex << "moving registers to memory\n";
+          cout << hex << "LD [i], V" << d_x << '\n';
           for(auto i = 0; i <= x; i++) {
             memory[I + i] = v[i];
           }
@@ -195,13 +195,10 @@ void Cpu::step() {
   }
 }
 
-void Cpu::run(bool debug = false) {
+void Cpu::run() {
   bool running = true;
   while(running) {
     step();
-    if(debug) {
-      dumpRegisters(cout);
-    }
   }
 }
 

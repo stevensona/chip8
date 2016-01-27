@@ -6,10 +6,10 @@ public:
   Cpu();
   void reset();   
   void loadProgram(const std::string &filename);
-  void run(bool debug);
+  void run();
   void step();
-  void dumpMemory(std::ostream &stream);
-  void dumpRegisters(std::ostream &stream);
+  void dumpMemory();
+  void dumpRegisters();
 
 private:  
 
