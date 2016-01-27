@@ -13,7 +13,7 @@ Cpu::Cpu() {}
 
 void Cpu::reset() {
   pc = 0x200;
-  ir = get_dword(pc);
+  ir = getDWord(pc);
   for(auto i = 0; i < 4096; i++) {
     memory[i] = 0x0;
   }
@@ -78,9 +78,12 @@ void Cpu::decode_failure(uint16_t instruction) {
 }
 
 void Cpu::step() {
-  ir = get_dword(pc);
-  const uint8_t x = (ir & 0x0F00) >> 8;
-  const uint8_t y = (ir & 0x00F0) >> 4;
+  fetch();
+  const uint8_t msb = ir >> 12;
+  const uint8_t lsb = ir & 0xF;
+
+  const uint8_t x = (ir & 0xF00) >> 8;
+  const uint8_t y = (ir & 0xF0) >> 4;
   const uint8_t kk = ir & 0xFF;
   const uint16_t nnn = ir & 0xFFF;
   const uint8_t Vx = v[x];
@@ -93,7 +96,7 @@ void Cpu::step() {
   auto d_nnn = unsigned(nnn);
 
   cout << hex << setw(4) << pc << ' ' << setw(4) << ir << ' ';
-  switch(ir >> 12) {
+  switch(msb) {
     case 0x0:
       switch(kk) {
         case 0xE0: //TODO clear the screen
@@ -120,11 +123,15 @@ void Cpu::step() {
       break;
     case 0x3:
       cout << hex << "SE V" << d_x << ", " << d_kk << '\n';
-      pc += kk == Vx ? 4 : 2;
+      pc += Vx == kk ? 4 : 2;
       break;
     case 0x4:
       cout << hex << "SNE V" << d_x << ", " << d_kk << '\n';
-      pc += kk == Vx ? 2 : 4;
+      pc += Vx != kk ? 4 : 2;
+      break;
+    case 0x5:
+      cout << hex << "SE V" << d_x << ", V" << d_y << '\n';
+      pc += Vx == Vy ? 4 : 2;
       break;
     case 0x6: 
       cout << hex << "LD V" << d_x << ", " << d_kk << '\n';
@@ -138,7 +145,11 @@ void Cpu::step() {
       break;
     case 0x8: {
 
-      switch(ir & 0xF) {
+      switch(lsb) {
+        case 1:
+          cout << hex << "OR V" << d_x << ", V" << d_y << '\n';
+          v[x] = Vx | Vy;
+          break;
         case 2:
           cout << hex << "AND V" << d_x << ", V" << d_y << '\n';
           v[x] = Vx & Vy;
@@ -161,7 +172,7 @@ void Cpu::step() {
       pc += 2;
       break;
     case 0xF:
-      switch(ir & 0xFF) {
+      switch(kk) {
         case 0x29:
           cout << hex << "LD F, V" << d_x << '\n';
           I = Vx * 5;
@@ -211,18 +222,18 @@ void Cpu::push(uint16_t value) {
 }
 
 uint16_t Cpu::pop() {
-  uint16_t top = get_dword(STACK_BEGIN + stack_pointer);
+  uint16_t top = getDWord(STACK_BEGIN + stack_pointer);
   stack_pointer -= 2;
   if (stack_pointer > 0x1F) //handle underflow
     stack_pointer = 0x1F;
   return top;
 }
 
-uint8_t Cpu::get_word(uint16_t addr) {
-  return memory[addr];
+void Cpu::fetch() {
+  ir = getDWord(pc);
 }
 
-uint16_t Cpu::get_dword(uint16_t addr) {
+uint16_t Cpu::getDWord(uint16_t addr) {
   return (static_cast<uint16_t>(memory[addr]) << 8) | memory[addr + 1];
 }
 

@@ -26,9 +26,8 @@ private:
   uint8_t stack_pointer; //offset from 0xEA0. acceptable values 0-F
   void push(uint16_t);
   uint16_t pop();
-
-  uint8_t get_word(uint16_t);
-  uint16_t get_dword(uint16_t);
+  void fetch();
+  uint16_t getDWord(uint16_t);
   void decode_failure(uint16_t);
 
 };
