@@ -79,11 +79,23 @@ void Cpu::decode_failure(uint16_t instruction) {
 
 void Cpu::step() {
   ir = get_dword(pc);
-  
+  const uint8_t x = (ir & 0x0F00) >> 8;
+  const uint8_t y = (ir & 0x00F0) >> 4;
+  const uint8_t kk = ir & 0xFF;
+  const uint16_t nnn = ir & 0xFFF;
+  const uint8_t Vx = v[x];
+  const uint8_t Vy = v[y];
+
+  //for displaying values
+  auto d_x = unsigned(x);
+  auto d_y = unsigned(y);
+  auto d_kk = unsigned(kk);
+  auto d_nnn = unsigned(nnn);
+
   cout << hex << setw(4) << pc << ' ' << setw(4) << ir << ' ';
   switch(ir >> 12) {
     case 0x0:
-      switch(ir & 0xFF) {
+      switch(kk) {
         case 0xE0: //TODO clear the screen
           cout << hex << "***(TODO) CLS\n";
           pc += 2;
@@ -98,39 +110,38 @@ void Cpu::step() {
       }
       break;
     case 0x1: 
-      cout << hex << "JP " << (ir & 0xFFF) << '\n';
-      pc = ir & 0xFFF;
+      cout << hex << "JP " << d_nnn << '\n';
+      pc = nnn;
       break;
     case 0x2:
-      cout << hex << "CALL " << (ir & 0xfff) << '\n';
+      cout << hex << "CALL " << d_nnn << '\n';
       push(pc + 2);
-      pc = ir & 0xFFF;
+      pc = nnn;
       break;
     case 0x3:
-      cout << hex << "SE V" << ((ir & 0xFFF) >> 8) << ", " << (ir & 0xFF) << '\n';
-      pc += ((ir & 0xFF) == v[(ir & 0xFFF) >> 8]) ? 4 : 2;
+      cout << hex << "SE V" << d_x << ", " << d_kk << '\n';
+      pc += kk == Vx ? 4 : 2;
       break;
     case 0x4:
-      cout << hex << "SNE V" << ((ir & 0xFFF) >> 8) << ", " << (ir & 0xFF) << '\n';
-      pc += ((ir & 0xFF) == v[(ir & 0xFFF) >> 8]) ? 2 : 4;
+      cout << hex << "SNE V" << d_x << ", " << d_kk << '\n';
+      pc += kk == Vx ? 2 : 4;
       break;
     case 0x6: 
-      cout << hex << "LD V" << ((ir & 0xFFF) >> 8) << ", " << (ir & 0xFF) << '\n';
-      v[(ir & 0xFFF) >> 8] = ir & 0xFF;
+      cout << hex << "LD V" << d_x << ", " << d_kk << '\n';
+      v[x] = kk;
       pc += 2;
       break;
     case 0x7:
-      cout << hex << "ADD V" << ((ir & 0xFFF) >> 8) << ", " << (ir & 0xFF) << '\n';
-      v[(ir & 0xFFF) >> 8] += ir & 0xFF;
+      cout << hex << "ADD V" << d_x << ", " << d_kk << '\n';
+      v[x] += kk;
       pc += 2;
       break;
     case 0x8: {
-      uint8_t x = (ir & 0x0F00) >> 8;
-      uint8_t y = (ir & 0x00F0) >> 4;
+
       switch(ir & 0xF) {
         case 2:
-          cout << hex << "AND V" << ((ir & 0xFFF) >> 8) << ", V" << ((ir & 0xFF) >> 4) << '\n';
-          v[(ir & 0xFFF) >> 8] = v[(ir & 0xFFF) >> 8] & v[(ir & 0xFF) >> 4];
+          cout << hex << "AND V" << d_x << ", V" << d_y << '\n';
+          v[x] = Vx & Vy;
           break;
         default:
           decode_failure(ir);
@@ -140,8 +151,8 @@ void Cpu::step() {
       break;
     }
     case 0xA: 
-      cout << hex << "LD I, " << (ir & 0xFFF) << '\n';
-      I = ir & 0xFFF;
+      cout << hex << "LD I, " << d_nnn << '\n';
+      I = nnn;
       pc += 2;
       break;
     case 0xD:
@@ -152,23 +163,23 @@ void Cpu::step() {
     case 0xF:
       switch(ir & 0xFF) {
         case 0x29:
-          cout << hex << "LD F, V" << ((ir & 0xFFF) >> 8) << '\n';
-          I = (v[(ir & 0xFFF) >> 8]) * 5;
+          cout << hex << "LD F, V" << d_x << '\n';
+          I = Vx * 5;
           break;
         case 0x55:
           cout << hex << "moving registers to memory\n";
-          for(auto i = 0; i <= (ir & 0xFFF) >> 8; i++) {
-            memory[I + i] = v[(ir & 0xFFF) >> 8];
+          for(auto i = 0; i <= x; i++) {
+            memory[I + i] = v[i];
           }
           break;
         case 0x1E:
-          cout << hex << "ADD I, V" << ((ir & 0xFFF) >> 8) << '\n';
-          I += v[(ir & 0xFFF) >> 8];
+          cout << hex << "ADD I, V" << d_x << '\n';
+          I += Vx;
           break;
         case 0x65:
-          cout << hex << "LD V" << ((ir & 0xFFF) >> 8) << ", [I]\n";
-          for(auto i = 0; i <= (ir & 0xFFF) >> 8; i++) {
-            v[(ir & 0xFFF) >> 8] = memory[I + i];
+          cout << hex << "LD V" << d_x << ", [I]\n";
+          for(auto i = 0; i <= x; i++) {
+            v[i] = memory[I + i];
           }
           break;
         default:
