@@ -13,8 +13,9 @@ public:
 
 private:  
 
-  static const int MEMORY_SIZE = 4096;
-  static const int REGISTER_COUNT = 16;
+  static const uint16_t MEMORY_SIZE = 4096;
+  static const uint16_t REGISTER_COUNT = 16;
+  static const uint16_t STACK_BEGIN = 0xEA0;
 
   uint8_t memory[MEMORY_SIZE];
   uint16_t pc;

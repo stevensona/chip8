@@ -206,12 +206,12 @@ void Cpu::push(uint16_t value) {
   stack_pointer += 2;
   if (stack_pointer > 0x1F) //overflow the stack
     stack_pointer = 0x0;
-  memory[0xEA0 + stack_pointer] = (value & 0xFF00) >> 8;
-  memory[0xEA0 + stack_pointer + 1] = value & 0xFF;
+  memory[STACK_BEGIN + stack_pointer] = (value & 0xFF00) >> 8;
+  memory[STACK_BEGIN + stack_pointer + 1] = value & 0xFF;
 }
 
 uint16_t Cpu::pop() {
-  uint16_t top = get_dword(0xEA0 + stack_pointer);
+  uint16_t top = get_dword(STACK_BEGIN + stack_pointer);
   stack_pointer -= 2;
   if (stack_pointer > 0x1F) //handle underflow
     stack_pointer = 0x1F;
