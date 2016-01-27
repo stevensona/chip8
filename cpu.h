@@ -8,7 +8,6 @@ public:
   Cpu(Display&);
   void reset();   
   void loadProgram(const std::string &filename);
-  void run();
   void step();
   void dumpMemory();
   void dumpRegisters();
@@ -28,7 +27,7 @@ private:
   Display *display;
   std::random_device rnd;
   
-  uint8_t stack_pointer; //offset from 0xEA0. acceptable values 0-F
+  uint8_t stack_pointer; //offset from 0xEA0.
   void push(uint16_t);
   uint16_t pop();
   void fetch();

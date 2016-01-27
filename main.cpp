@@ -22,6 +22,15 @@ int main(int argc, char** argv) {
 
   Cpu chip8(display);
   chip8.loadProgram(std::string(argv[1]));
-  chip8.run();
+  
+  SDL_Event e;
+  bool running = true;
+  while(running) {
+    while(SDL_PollEvent(&e)) {
+      if(e.type == SDL_QUIT) running = false;
+    }
+    chip8.step();
+
+  }
   SDL_Quit();
 }
