@@ -9,7 +9,9 @@ using namespace std;
 //TODO improve consistency of error handling/reporting
 //TODO improve debug info function names
 
-Cpu::Cpu() {}
+Cpu::Cpu(Display& d) {
+  display = &d;
+}
 
 void Cpu::reset() {
   pc = 0x200;
@@ -96,6 +98,7 @@ void Cpu::step() {
   auto d_nnn = unsigned(nnn);
 
   cout << hex << setw(4) << pc << ' ' << setw(4) << ir << ' ';
+  //TODO inconsistent matching format
   switch(msb) {
     case 0x0:
       switch(kk) {
@@ -145,6 +148,10 @@ void Cpu::step() {
       break;
     case 0x8: 
       switch(lsb) {
+        case 0:
+          cout << hex << "LD V" << d_x << ", V" << d_y << '\n';
+          v[x] = v[y];
+          break;
         case 1:
           cout << hex << "OR V" << d_x << ", V" << d_y << '\n';
           v[x] = Vx | Vy;
@@ -162,6 +169,11 @@ void Cpu::step() {
     case 0xA: 
       cout << hex << "LD I, " << d_nnn << '\n';
       I = nnn;
+      pc += 2;
+      break;
+    case 0xC:
+      cout << hex << "RND V" << d_x << ", " << d_kk << '\n';
+      v[x] = (rnd() & 0xF) & kk;
       pc += 2;
       break;
     case 0xD:

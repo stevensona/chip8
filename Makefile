@@ -1,7 +1,7 @@
 CC=clang++
 CFLAGS=-c -Wall -std=c++11
 LDFLAGS=-lSDL2
-SOURCES=cpu.cpp main.cpp
+SOURCES=cpu.cpp main.cpp display.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=chip8
 

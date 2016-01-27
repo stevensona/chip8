@@ -1,9 +1,11 @@
 #include <string>
+#include <random>
+#include "display.h"
 
 class Cpu {
 
 public:
-  Cpu();
+  Cpu(Display&);
   void reset();   
   void loadProgram(const std::string &filename);
   void run();
@@ -22,6 +24,9 @@ private:
   uint16_t ir;
   uint8_t v[REGISTER_COUNT];
   uint16_t I;
+
+  Display *display;
+  std::random_device rnd;
   
   uint8_t stack_pointer; //offset from 0xEA0. acceptable values 0-F
   void push(uint16_t);
