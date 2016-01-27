@@ -59,7 +59,7 @@ void Cpu::loadProgram(const string& filename) {
   streampos size = ifs.tellg();
   ifs.seekg(0, ifs.beg);
   ifs.read((char*)&memory[pc], size);
-  cout << "read " << size << " bytes\n";
+  //cout << "read " << size << " bytes\n";
   ifs.close();
 }
 
@@ -69,13 +69,13 @@ void Cpu::dumpMemory() {
 }
 
 void Cpu::dumpRegisters() {
-  cout << "pc: " << pc << ' ';
-  cout << "ir: " << ir << ' ';
-  cout << "I: " << I << '\n';
+  //cout << hex << "pc: " << pc << ' ';
+  //cout << hex << "ir: " << ir << ' ';
+  //cout << hex << "I: " << I << '\n';
   for(auto i = 0; i < REGISTER_COUNT; i++) {
-    cout  << "v" << i << ": " << setw(4) << unsigned(v[i]) << '\n';
+    //cout << hex  << "v" << i << ": " << setw(4) << unsigned(v[i]) << '\n';
   }
-  cout << endl;
+  //cout << endl;
 }
 
 void Cpu::decode_failure(uint16_t instruction) {
@@ -102,20 +102,20 @@ void Cpu::step() {
   auto d_kk = unsigned(kk);
   auto d_nnn = unsigned(nnn);
 
-  cout << hex << setw(4) << unsigned(pc) << ' ' << 
-    setw(4) << unsigned(ir) << ' ' <<
-    setw(2) << unsigned(sp) << ' ';
+  //cout << hex << setw(4) << unsigned(pc) << ' ' << 
+  // setw(4) << unsigned(ir) << ' ' <<
+  // setw(2) << unsigned(sp) << ' ';
   //TODO inconsistent matching format
   switch(msb) {
     case 0x0:
       switch(kk) {
         case 0xE0: //TODO clear the screen
-          cout << hex << "CLS\n";
+          //cout << hex << "CLS\n";
           display->clear();
           pc += 2;
           break;
         case 0xEE:
-          cout << hex << "RET\n";
+          //cout << hex << "RET\n";
           pc = stack[--sp];
           break;
         default:
@@ -124,56 +124,56 @@ void Cpu::step() {
       }
       break;
     case 0x1: 
-      cout << hex << "JP " << d_nnn << '\n';
+      //cout << hex << "JP " << d_nnn << '\n';
       pc = nnn;
       break;
     case 0x2:
-      cout << hex << "CALL " << d_nnn << '\n';
+      //cout << hex << "CALL " << d_nnn << '\n';
       stack[sp++] = pc + 2;
       pc = nnn;
       break;
     case 0x3:
-      cout << hex << "SE V" << d_x << ", " << d_kk << '\n';
+      //cout << hex << "SE V" << d_x << ", " << d_kk << '\n';
       pc += Vx == kk ? 4 : 2;
       break;
     case 0x4:
-      cout << hex << "SNE V" << d_x << ", " << d_kk << '\n';
+      //cout << hex << "SNE V" << d_x << ", " << d_kk << '\n';
       pc += Vx != kk ? 4 : 2;
       break;
     case 0x5:
-      cout << hex << "SE V" << d_x << ", V" << d_y << '\n';
+      //cout << hex << "SE V" << d_x << ", V" << d_y << '\n';
       pc += Vx == Vy ? 4 : 2;
       break;
     case 0x6: 
-      cout << hex << "LD V" << d_x << ", " << d_kk << '\n';
+      //cout << hex << "LD V" << d_x << ", " << d_kk << '\n';
       v[x] = kk;
       pc += 2;
       break;
     case 0x7:
-      cout << hex << "ADD V" << d_x << ", " << d_kk << '\n';
+      //cout << hex << "ADD V" << d_x << ", " << d_kk << '\n';
       v[x] += kk;
       pc += 2;
       break;
     case 0x8: 
       switch(lsb) {
         case 0:
-          cout << hex << "LD V" << d_x << ", V" << d_y << '\n';
+          //cout << hex << "LD V" << d_x << ", V" << d_y << '\n';
           v[x] = v[y];
           break;
         case 1:
-          cout << hex << "OR V" << d_x << ", V" << d_y << '\n';
+          //cout << hex << "OR V" << d_x << ", V" << d_y << '\n';
           v[x] = Vx | Vy;
           break;
         case 2:
-          cout << hex << "AND V" << d_x << ", V" << d_y << '\n';
+          //cout << hex << "AND V" << d_x << ", V" << d_y << '\n';
           v[x] = Vx & Vy;
           break;
         case 3:
-          cout << hex << "XOR V" << d_x << ", V" << d_y << '\n';
+          //cout << hex << "XOR V" << d_x << ", V" << d_y << '\n';
           v[x] = Vx != Vy;
           break;
         case 4:
-          cout << hex << "ADD V" << d_x << ", V" << d_y << '\n';
+          //cout << hex << "ADD V" << d_x << ", V" << d_y << '\n';
           //might be a better way to do this
           {
             auto x16 = static_cast<uint16_t>(v[x]);
@@ -183,7 +183,7 @@ void Cpu::step() {
           v[x] = v[x] + v[y];
           break;
         case 5:
-          cout << hex << "SUB V" << d_x << ", V" << d_y << '\n';
+          //cout << hex << "SUB V" << d_x << ", V" << d_y << '\n';
           v[0xF] = Vx > Vy ? 1 : 0;
           v[x] = v[x] - v[y];
           break;
@@ -194,43 +194,43 @@ void Cpu::step() {
       pc += 2;
       break;
     case 0x9:
-      cout << hex << "SNE V" << d_x << ", V" << d_y << '\n';
+      //cout << hex << "SNE V" << d_x << ", V" << d_y << '\n';
       pc += Vx != Vy ? 4 : 2;
       break;
     case 0xA: 
-      cout << hex << "LD I, " << d_nnn << '\n';
+      //cout << hex << "LD I, " << d_nnn << '\n';
       I = nnn;
       pc += 2;
       break;
     case 0xC:
-      cout << hex << "RND V" << d_x << ", " << d_kk << '\n';
+      //cout << hex << "RND V" << d_x << ", " << d_kk << '\n';
       v[x] = (rnd() & 0xFF) & kk;
       pc += 2;
       break;
     case 0xD:
       //TODO draw a sprite
-      cout << hex << "DRW V" << d_x << ", V" << d_y << ", " << lsb << '\n';
+      //cout << hex << "DRW V" << d_x << ", V" << d_y << ", " << lsb << '\n';
       v[0xF] = display->blit(&memory[I], lsb, Vx, Vy);
       pc += 2;
       break;
     case 0xF:
       switch(kk) {
         case 0x29:
-          cout << hex << "LD F, V" << d_x << '\n';
+          //cout << hex << "LD F, V" << d_x << '\n';
           I = Vx * 5;
           break;
         case 0x55:
-          cout << hex << "LD [i], V" << d_x << '\n';
+          //cout << hex << "LD [i], V" << d_x << '\n';
           for(auto i = 0; i <= x; i++) {
             memory[I + i] = v[i];
           }
           break;
         case 0x1E:
-          cout << hex << "ADD I, V" << d_x << '\n';
+          //cout << hex << "ADD I, V" << d_x << '\n';
           I += Vx;
           break;
         case 0x65:
-          cout << hex << "LD V" << d_x << ", [I]\n";
+          //cout << hex << "LD V" << d_x << ", [I]\n";
           for(auto i = 0; i <= x; i++) {
             v[i] = memory[I + i];
           }

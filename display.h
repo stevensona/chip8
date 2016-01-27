@@ -16,4 +16,6 @@ private:
   SDL_Window *window;
   SDL_Renderer *renderer;
   std::bitset<2048> memory;
+
+  bool setPixel(int16_t x, int16_t y);
 };

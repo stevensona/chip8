@@ -45,17 +45,23 @@ void Display::clear() {
 }
 
 uint8_t Display::blit(uint8_t* src, uint8_t size, uint8_t x, uint8_t y) {
-  //This method needs to be refactored
   bool pixel_cleared = false;
   for(auto h = 0; h < size; h++) {
     for(auto b = 0; b < 8; b++) {
-      size_t pos = (y + h) * 64 + x + b;
-      const auto dest = memory[pos];
-      const auto source = (src[h] >> (7 - b)) & 0x1; 
-      pixel_cleared = pixel_cleared || (dest && source);
-      memory.set(pos, dest != source);
+      if((src[h] >> (7 - b)) & 0x1)
+        pixel_cleared = setPixel(x + b, y + h) || pixel_cleared;
     }
   }
   update();
   return pixel_cleared ? 1 : 0;
+}
+
+bool Display::setPixel(int16_t x, int16_t y) {
+  while(x > 63) x -= 64;
+  while(x < 0) x += 64;
+  while(y > 31) y -= 32;
+  while(y < 0) y += 32;
+  size_t pos = y * 64 + x;
+  memory.flip(pos);
+  return !memory[pos]; //return true if pixel caused one to erase
 }

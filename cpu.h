@@ -23,7 +23,7 @@ private:
   uint16_t ir;
   uint8_t v[REGISTER_COUNT];
   uint16_t I;
-  uint16_t sp;
+  uint8_t sp;
   uint16_t stack[STACK_SIZE];
 
   Display *display;
