@@ -66,7 +66,7 @@ void Cpu::dumpRegisters() {
   cout << "ir: " << ir << ' ';
   cout << "I: " << I << '\n';
   for(auto i = 0; i < REGISTER_COUNT; i++) {
-    cout  << "v" << i << ": " << setw(4) << static_cast<uint16_t>(v[i]) << '\n';
+    cout  << "v" << i << ": " << setw(4) << unsigned(v[i]) << '\n';
   }
   cout << endl;
 }
