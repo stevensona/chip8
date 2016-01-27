@@ -98,7 +98,7 @@ void Cpu::step() {
   auto d_kk = unsigned(kk);
   auto d_nnn = unsigned(nnn);
 
-  //cout << hex << setw(4) << pc << ' ' << setw(4) << ir << ' ';
+  //cout << hex << setw(4) << pc << ' ' << setw(4) << ir << '\n';
   //TODO inconsistent matching format
   switch(msb) {
     case 0x0:

@@ -4,19 +4,22 @@
 #include "display.h"
 #include "cpu.h"
 
+using namespace std; 
+
 int main(int argc, char** argv) {
 
   if (argc < 2) {
-    std::cout << "no input file specified\n";
+    cout << "no input file specified\n";
     return -1;
   }
 
   if(SDL_Init(SDL_INIT_VIDEO) != 0) {
-    std::cout << "SDL_Init error: " << SDL_GetError() << '\n';
+    cout << "SDL_Init error: " << SDL_GetError() << '\n';
     return -1;
   }
-
+  cout << "making display\n";
   Display display;
+  cout << "made display\n";
 
   display.clear();
 

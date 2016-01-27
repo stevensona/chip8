@@ -1,5 +1,6 @@
 
 #pragma once
+#include <bitset>
 #include <SDL2/SDL.h>
 
 class Display {
@@ -14,6 +15,5 @@ public:
 private:
   SDL_Window *window;
   SDL_Renderer *renderer;
-  //uint8_t memory[256];
-  bool memory[2048];
+  std::bitset<2048> memory;
 };
