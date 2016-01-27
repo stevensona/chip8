@@ -6,7 +6,6 @@
 
 int main(int argc, char** argv) {
 
-  bool display[2048];
 
   if(SDL_Init(SDL_INIT_VIDEO) != 0) {
     std::cout << "SDL_Init error: " << SDL_GetError() << '\n';
