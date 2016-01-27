@@ -27,10 +27,10 @@ void Display::update() {
   for(auto i = 0; i < 2048; i++) {
     if(memory[i]) {
       SDL_Rect r;
-      r.x = (i % 64) * 8;
-      r.y = i / 64 * 8;
-      r.w = 7;
-      r.h = 7;
+      r.x = (i % 64) * 10;
+      r.y = i / 64 * 10;
+      r.w = 10;
+      r.h = 10;
       SDL_RenderFillRect(renderer, &r);
     }
   }
@@ -47,11 +47,11 @@ void Display::clear() {
 uint8_t Display::blit(uint8_t* src, uint8_t size, uint8_t x, uint8_t y) {
   //This method needs to be refactored
   bool pixel_cleared = false;
-  for(auto i = 0; i < size; i++) {
+  for(auto h = 0; h < size; h++) {
     for(auto b = 0; b < 8; b++) {
-      size_t pos = (y + i) * 64 + x + b;
+      size_t pos = (y + h) * 64 + x + b;
       const auto dest = memory[pos];
-      const auto source = (src[i] >> (7 - b)) & 0x1; 
+      const auto source = (src[h] >> (7 - b)) & 0x1; 
       pixel_cleared = pixel_cleared || (dest && source);
       memory.set(pos, dest != source);
     }

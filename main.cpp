@@ -17,9 +17,7 @@ int main(int argc, char** argv) {
     cout << "SDL_Init error: " << SDL_GetError() << '\n';
     return -1;
   }
-  cout << "making display\n";
   Display display;
-  cout << "made display\n";
 
   display.clear();
 
