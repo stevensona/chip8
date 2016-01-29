@@ -60,9 +60,11 @@ void Display::clear() {
 uint8_t Display::blit(uint8_t* src, uint8_t size, uint8_t x, uint8_t y) {
   bool pixel_cleared = false;
   for(auto h = 0; h < size; h++) { //Number of bytes to draw
+    auto pixels = src[h];
     for(auto b = 0; b < 8; b++) {  //Draw each bit in the byte
-      if((src[h] >> (7 - b)) & 0x1)
-    pixel_cleared = setPixel(x + b, y + h) || pixel_cleared;
+      if(pixels & 0x80)
+        pixel_cleared = setPixel(x + b, y + h) || pixel_cleared;
+      pixels = pixels << 1;
     }
   }
   SDL_Rect dirty = {x, y, 8, size};
@@ -77,5 +79,5 @@ bool Display::setPixel(int16_t x, int16_t y) {
   while(y < 0) y += SCREEN_HEIGHT;
   size_t pos = y * SCREEN_WIDTH + x;
   memory.flip(pos);
-  return !memory[pos]; //return true if pixel caused one to erase
+  return !memory[pos]; //return true if pixel caused an erase
 }

@@ -48,7 +48,13 @@ int main(int argc, char** argv) {
 
   SDL_Event e;
   bool running = true;
+
+  auto last_tick = SDL_GetTicks();
+
   while(running) {
+
+    auto frame_start = SDL_GetTicks();
+
     while(SDL_PollEvent(&e)) {
       switch(e.type) {
         case SDL_QUIT:
@@ -72,11 +78,17 @@ int main(int argc, char** argv) {
     }
 
     if(!chip8.waitingForKey()) {
+      if(SDL_GetTicks() - last_tick > 16) {
+        chip8.tickTimers();
+        last_tick = SDL_GetTicks();
+      }
       chip8.step();
     }
 
-    //TODO run *AT* 500Hz with the option to speed up or slow down
-    SDL_Delay(1000 / SPEED); //run at "slightly less than 500Hz"
+    //TODO run with the option to speed up or slow down
+    auto frame_end = SDL_GetTicks();
+    if(frame_end - frame_start < 1000 / SPEED) //If running faster than desired speed, add delay
+      SDL_Delay(1000 / SPEED - (frame_end - frame_start)); //run at 500Hz by default
 
   }
   SDL_Quit();

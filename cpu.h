@@ -10,6 +10,7 @@ public:
   void reset();
   void loadProgram(const std::string &filename);
   void step();
+  void tickTimers();
   void dumpMemory();
   void dumpRegisters();
 

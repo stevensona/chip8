@@ -226,7 +226,7 @@ void Cpu::step() {
       pc += 2;
       break;
     case 0xD:
-      cout << hex << "DRW V" << d_x << ", V" << d_y << ", " << lsb << '\n';
+      cout << hex << "DRW V" << d_x << ", V" << d_y << ", nibble\n";
       v[0xF] = display->blit(&memory[I], lsb, Vx, Vy);
       pc += 2;
       break;
@@ -247,25 +247,39 @@ void Cpu::step() {
       break;
 
     case 0xF:
+
       switch(kk) {
-    case 0x0A:
-      cout << hex << "LD V" << d_x << ", K\n";
-      wait_for_key = true;
-      wait_for_key_reg = Vx;
-      break;
-    case 0x18:
-      cout << hex << "LD ST, V" << d_x << "\n";
-      ST = Vx;
-      break;
+        case 0x0A:
+          cout << hex << "LD V" << d_x << ", K\n";
+          wait_for_key = true;
+          wait_for_key_reg = Vx;
+          break;
+        case 0x07:
+          cout << hex << "LD V" << d_x << ", DT\n";
+          v[x] = DT;
+          break;
+        case 0x15:
+          cout << hex << "LD DT, V" << d_x << '\n';
+          DT = Vx;
+          break;
+        case 0x18:
+          cout << hex << "LD ST, V" << d_x << '\n';
+          ST = Vx;
+          break;
         case 0x29:
           cout << hex << "LD F, V" << d_x << '\n';
           I = Vx * 5;
           break;
+        case 0x33:
+          cout << hex << "LD B, V" << d_x << '\n';
+          memory[I] = Vx % 1000 / 100;
+          memory[I + 1] = Vx % 100 / 10;
+          memory[I + 2] = Vx % 10;
+          break;
         case 0x55:
           cout << hex << "LD [i], V" << d_x << '\n';
-          for(auto i = 0; i <= x; i++) {
+          for(auto i = 0; i <= x; i++)
             memory[I + i] = v[i];
-          }
           break;
         case 0x1E:
           cout << hex << "ADD I, V" << d_x << '\n';
@@ -273,9 +287,8 @@ void Cpu::step() {
           break;
         case 0x65:
           cout << hex << "LD V" << d_x << ", [I]\n";
-          for(auto i = 0; i <= x; i++) {
+          for(auto i = 0; i <= x; i++)
             v[i] = memory[I + i];
-          }
           break;
         default:
           decode_failure(ir);
@@ -284,10 +297,15 @@ void Cpu::step() {
       pc += 2;
       break;
 
-    default:
-      decode_failure(ir);
-      break;
+      default:
+        decode_failure(ir);
+        break;
   }
+}
+
+void Cpu::tickTimers() {
+  if(DT > 0) DT -= 1;
+  if(ST > 0) ST -= 1;
 }
 
 void Cpu::fetch() {
