@@ -12,6 +12,7 @@ Simple (work in progress) chip8 emulator written in C++11 using SDL implemented 
     $ ./chip8 <input file>
 
 ## What's left?
+* Sound
 * There may be a few instructions outstanding
 * More command line options (toggle verbose output)
 * Identify/fix bugs
