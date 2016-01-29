@@ -55,19 +55,18 @@ void Cpu::reset() {
 
 void Cpu::loadProgram(const string& filename) {
   reset(); //puts the Cpu in a known state
-
   ifstream is(filename, ios::in | ios::binary);
-  vector<char> contents(
+  vector<char> prog(
     (istreambuf_iterator<char>(is)),
     istreambuf_iterator<char>()
   );
   is.close();
-  copy(contents.begin(), contents.end(), memory.begin() + pc);
+  //copy program into memory
+  copy(prog.begin(), prog.end(), memory.begin() + pc);
 }
 
 void Cpu::dumpMemory() {
-  //for(auto w = 0; w < )
-  //TODO
+  //TODO if needed
 }
 
 void Cpu::dumpRegisters() {
@@ -107,11 +106,11 @@ void Cpu::step() {
   cout << hex << setw(4) << unsigned(pc) << ' ' <<
    setw(4) << unsigned(ir) << ' ' <<
    setw(2) << unsigned(sp) << ' ';
-  //TODO inconsistent matching format
+
   switch(msb) {
     case 0x0:
       switch(kk) {
-        case 0xE0: //TODO clear the screen
+        case 0xE0:
           cout << hex << "CLS\n";
           display->clear();
           pc += 2;
@@ -194,17 +193,16 @@ void Cpu::step() {
           v[0xF] = lsb == 0x1 ? 1 : 0;
           v[x] = v[x] >> 1;
           break;
-    case 0x7:
+        case 0x7:
           cout << hex << "SUBN V" << d_x << ", V" << d_y << '\n';
           v[0xF] = Vy > Vx ? 1 : 0;
           v[x] = v[y] - v[x];
           break;
-    case 0xE:
+        case 0xE:
           cout << hex << "SHL V" << d_x << ", {V" << d_y << "}\n";
           v[0xF] = msb == 0x1 ? 1 : 0;
           v[x] = v[x] << 1;
           break;
-
         default:
           decode_failure(ir);
           break;
@@ -245,9 +243,7 @@ void Cpu::step() {
           break;
       }
       break;
-
     case 0xF:
-
       switch(kk) {
         case 0x0A:
           cout << hex << "LD V" << d_x << ", K\n";
@@ -296,10 +292,9 @@ void Cpu::step() {
       }
       pc += 2;
       break;
-
-      default:
-        decode_failure(ir);
-        break;
+    default:
+      decode_failure(ir);
+      break;
   }
 }
 
