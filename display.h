@@ -9,7 +9,7 @@ public:
   Display();
   ~Display();
   void update();
-  void update(SDL_Rect &rect);
+  void update(const SDL_Rect &rect);
   void clear();
   uint8_t blit(uint8_t* src, uint8_t size, uint8_t x, uint8_t y);
 

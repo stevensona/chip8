@@ -8,7 +8,7 @@ Display::Display() {
   window = SDL_CreateWindow(
     "chip8",
     SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-    SCREEN_WIDTH * PIXEL_SIZE, SCREEN_HEIGHT * PIXEL_SIZE, SDL_WINDOW_SHOWN 
+    SCREEN_WIDTH * PIXEL_SIZE, SCREEN_HEIGHT * PIXEL_SIZE, SDL_WINDOW_SHOWN
   );
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
@@ -20,25 +20,34 @@ Display::~Display() {
 }
 
 void Display::update() {
-  SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
-  SDL_RenderClear(renderer);
-  SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+  SDL_Rect screen = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+  update(screen);
+}
 
-  for(auto i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
-    if(memory[i]) {
-      SDL_Rect r;
-      r.x = (i % SCREEN_WIDTH) * PIXEL_SIZE;
-      r.y = i / SCREEN_WIDTH * PIXEL_SIZE;
-      r.w = PIXEL_SIZE;
-      r.h = PIXEL_SIZE;
+void Display::update(const SDL_Rect &rect) {
+  SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
+  SDL_Rect clear = {
+    rect.x * PIXEL_SIZE,
+    rect.y * PIXEL_SIZE,
+    rect.w * PIXEL_SIZE,
+    rect.h * PIXEL_SIZE
+  };
+  SDL_RenderFillRect(renderer, &clear);
+
+  SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+  for(auto i = 0; i < rect.w * rect.h; i++) {
+    uint16_t pos = (rect.y + i / rect.w) * SCREEN_WIDTH + rect.x + i % rect.w;
+    if(memory[pos]) {
+      SDL_Rect r = {
+        rect.x * PIXEL_SIZE + (i % rect.w) * PIXEL_SIZE,
+        rect.y * PIXEL_SIZE + i / rect.w * PIXEL_SIZE,
+        PIXEL_SIZE,
+        PIXEL_SIZE
+      };
       SDL_RenderFillRect(renderer, &r);
     }
   }
   SDL_RenderPresent(renderer);
-}
-
-void Display::update(SDL_Rect &rect) {
-  throw(runtime_error("not implemented"));
 }
 
 void Display::clear() {
@@ -51,12 +60,13 @@ void Display::clear() {
 uint8_t Display::blit(uint8_t* src, uint8_t size, uint8_t x, uint8_t y) {
   bool pixel_cleared = false;
   for(auto h = 0; h < size; h++) { //Number of bytes to draw
-    for(auto b = 0; b < 8; b++) {  //Draw each bit in the byte	
+    for(auto b = 0; b < 8; b++) {  //Draw each bit in the byte
       if((src[h] >> (7 - b)) & 0x1)
-		pixel_cleared = setPixel(x + b, y + h) || pixel_cleared;
+    pixel_cleared = setPixel(x + b, y + h) || pixel_cleared;
     }
   }
-  update();
+  SDL_Rect dirty = {x, y, 8, size};
+  update(dirty);
   return pixel_cleared ? 1 : 0;
 }
 
