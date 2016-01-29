@@ -208,11 +208,26 @@ void Cpu::step() {
       pc += 2;
       break;
     case 0xD:
-      //TODO draw a sprite
       //cout << hex << "DRW V" << d_x << ", V" << d_y << ", " << lsb << '\n';
       v[0xF] = display->blit(&memory[I], lsb, Vx, Vy);
       pc += 2;
       break;
+    case 0xE:
+      switch(kk) {
+        case 0x9E:
+          //cout << hex << "SKP V" << dx << '\n';
+          pc += keys[Vx] ? 4 : 2;
+          break;
+        case 0xA1:
+          //cout << hex << "SKNP V" << dx << '\n';
+          pc += !keys[Vx] ? 4 : 2;
+          break;
+        default:
+          decode_failure(ir);
+          break;
+      }
+      break;
+
     case 0xF:
       switch(kk) {
         case 0x29:
@@ -256,4 +271,12 @@ uint16_t Cpu::getDWord(uint16_t addr) {
   return (static_cast<uint16_t>(memory[addr]) << 8) | memory[addr + 1];
 }
 
+void Cpu::pressKey(const uint8_t key) {
+  keys[key] = true;
 
+  //wait_for_key = false;
+}
+
+void Cpu::releaseKey(const uint8_t key) {
+  keys[key] = false;
+}

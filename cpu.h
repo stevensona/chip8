@@ -11,6 +11,9 @@ public:
   void step();
   void dumpMemory();
   void dumpRegisters();
+  
+  void pressKey(const uint8_t);
+  void releaseKey(const uint8_t);
 
 private:  
 
@@ -29,6 +32,9 @@ private:
   Display *display;
   std::random_device rnd;
   
+  bool wait_for_key;
+  bool keys[16];
+
 
 
   void fetch();
