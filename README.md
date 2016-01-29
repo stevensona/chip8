@@ -12,7 +12,6 @@ Simple (work in progress) chip8 emulator written in C++11 using SDL implemented 
     $ ./chip8 <input file>
 
 ## What's left?
-* Delay and sound timers
-* Several Fxxx instructions (notably: BCD operation as well as those associated with the built-in timers)
+* There may be a few instructions outstanding
 * More command line options (toggle verbose output)
 * Identify/fix bugs
