@@ -10,7 +10,15 @@ Simple (work in progress) chip8 emulator written in C++11 using SDL implemented 
     $ cd chip8
     $ make
     $ ./chip8 <input file>
+    
+## Controls
+The CHIP-8 uses a 16-key keypad and is mapped to the following keys:
 
+     1 2 3 4
+     q w e r
+     a s d f
+     z x c v
+     
 ## What's left?
 * Sound
 * There may be a few instructions outstanding
