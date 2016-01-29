@@ -16,3 +16,8 @@ Simple (work in progress) chip8 emulator written in C++11 using SDL implemented 
 * There may be a few instructions outstanding
 * More command line options (toggle verbose output)
 * Identify/fix bugs
+
+## Screenshots
+![pong](https://raw.githubusercontent.com/caryanne/chip8/master/screens/pong.png)
+![trip8 demo](https://raw.githubusercontent.com/caryanne/chip8/master/screens/trip8.png)
+![fifteen](https://raw.githubusercontent.com/caryanne/chip8/master/screens/fifteen.png)
