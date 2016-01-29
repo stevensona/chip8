@@ -156,23 +156,23 @@ void Cpu::step() {
       break;
     case 0x8: 
       switch(lsb) {
-        case 0:
+        case 0x0:
           //cout << hex << "LD V" << d_x << ", V" << d_y << '\n';
           v[x] = v[y];
           break;
-        case 1:
+        case 0x1:
           //cout << hex << "OR V" << d_x << ", V" << d_y << '\n';
           v[x] = Vx | Vy;
           break;
-        case 2:
+        case 0x2:
           //cout << hex << "AND V" << d_x << ", V" << d_y << '\n';
           v[x] = Vx & Vy;
           break;
-        case 3:
+        case 0x3:
           //cout << hex << "XOR V" << d_x << ", V" << d_y << '\n';
           v[x] = Vx != Vy;
           break;
-        case 4:
+        case 0x4:
           //cout << hex << "ADD V" << d_x << ", V" << d_y << '\n';
           //might be a better way to do this
           {
@@ -182,11 +182,27 @@ void Cpu::step() {
           }
           v[x] = v[x] + v[y];
           break;
-        case 5:
+        case 0x5:
           //cout << hex << "SUB V" << d_x << ", V" << d_y << '\n';
           v[0xF] = Vx > Vy ? 1 : 0;
           v[x] = v[x] - v[y];
           break;
+        case 0x6:
+          //cout << hex << "SHR V" << d_x << ", {V" << d_y << "}\n";
+          v[0xF] = lsb == 0x1 ? 1 : 0;
+          v[x] = v[x] >> 1;
+          break;
+		case 0x7:
+          //cout << hex << "SUBN V" << d_x << ", V" << d_y << '\n';
+          v[0xF] = Vy > Vx ? 1 : 0;
+          v[x] = v[y] - v[x];
+          break;
+		case 0xE:
+          //cout << hex << "SHL V" << d_x << ", {V" << d_y << "}\n";
+          v[0xF] = msb == 0x1 ? 1 : 0;
+          v[x] = v[x] << 1;
+          break;
+        
         default:
           decode_failure(ir);
           break;
