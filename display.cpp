@@ -8,7 +8,7 @@ Display::Display() {
   window = SDL_CreateWindow(
     "chip8",
     SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-    800, 600, SDL_WINDOW_SHOWN 
+    SCREEN_WIDTH * PIXEL_SIZE, SCREEN_HEIGHT * PIXEL_SIZE, SDL_WINDOW_SHOWN 
   );
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
@@ -24,17 +24,21 @@ void Display::update() {
   SDL_RenderClear(renderer);
   SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 
-  for(auto i = 0; i < 2048; i++) {
+  for(auto i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
     if(memory[i]) {
       SDL_Rect r;
-      r.x = (i % 64) * 10;
-      r.y = i / 64 * 10;
-      r.w = 10;
-      r.h = 10;
+      r.x = (i % SCREEN_WIDTH) * PIXEL_SIZE;
+      r.y = i / SCREEN_WIDTH * PIXEL_SIZE;
+      r.w = PIXEL_SIZE;
+      r.h = PIXEL_SIZE;
       SDL_RenderFillRect(renderer, &r);
     }
   }
   SDL_RenderPresent(renderer);
+}
+
+void Display::update(SDL_Rect &rect) {
+  throw(runtime_error("not implemented"));
 }
 
 void Display::clear() {
@@ -46,10 +50,10 @@ void Display::clear() {
 
 uint8_t Display::blit(uint8_t* src, uint8_t size, uint8_t x, uint8_t y) {
   bool pixel_cleared = false;
-  for(auto h = 0; h < size; h++) {
-    for(auto b = 0; b < 8; b++) {
+  for(auto h = 0; h < size; h++) { //Number of bytes to draw
+    for(auto b = 0; b < 8; b++) {  //Draw each bit in the byte	
       if((src[h] >> (7 - b)) & 0x1)
-        pixel_cleared = setPixel(x + b, y + h) || pixel_cleared;
+		pixel_cleared = setPixel(x + b, y + h) || pixel_cleared;
     }
   }
   update();
@@ -57,11 +61,11 @@ uint8_t Display::blit(uint8_t* src, uint8_t size, uint8_t x, uint8_t y) {
 }
 
 bool Display::setPixel(int16_t x, int16_t y) {
-  while(x > 63) x -= 64;
-  while(x < 0) x += 64;
-  while(y > 31) y -= 32;
-  while(y < 0) y += 32;
-  size_t pos = y * 64 + x;
+  while(x > SCREEN_WIDTH - 1) x -= SCREEN_WIDTH;
+  while(x < 0) x += SCREEN_WIDTH;
+  while(y > SCREEN_HEIGHT - 1) y -= SCREEN_HEIGHT;
+  while(y < 0) y += SCREEN_HEIGHT;
+  size_t pos = y * SCREEN_WIDTH + x;
   memory.flip(pos);
   return !memory[pos]; //return true if pixel caused one to erase
 }

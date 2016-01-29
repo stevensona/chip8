@@ -12,6 +12,7 @@ public:
   void dumpMemory();
   void dumpRegisters();
   
+  bool waitingForKey();  
   void pressKey(const uint8_t);
   void releaseKey(const uint8_t);
 
@@ -28,11 +29,15 @@ private:
   uint16_t I;
   uint8_t sp;
   uint16_t stack[STACK_SIZE];
+  uint8_t ST;
+  uint8_t DT;
+  
 
   Display *display;
   std::random_device rnd;
   
   bool wait_for_key;
+  uint8_t wait_for_key_reg;
   bool keys[16];
 
 

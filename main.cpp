@@ -9,6 +9,8 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
+  const int SPEED = 500; //Hz
+  
   if (argc < 2) {
     cout << "no input file specified\n";
     return -1;
@@ -53,18 +55,27 @@ int main(int argc, char** argv) {
           running = false;
           break;
         case SDL_KEYDOWN:
-          if(e.key.keysym.sym == SDLK_ESCAPE)
-            running = false;
-          if(keymap.find(e.key.keysym.sym) != keymap.end())
-            chip8.pressKey(keymap[e.key.keysym.sym]);
+          {
+		    auto key = e.key.keysym.sym;
+            if(key == SDLK_ESCAPE) running = false;
+            if(keymap.find(key) != keymap.end()) chip8.pressKey(keymap[key]);
+		  }
           break;
         case SDL_KEYUP:
-          if(keymap.find(e.key.keysym.sym) != keymap.end())
+          if(keymap.find(e.key.keysym.sym) != keymap.end()) {
             chip8.releaseKey(keymap[e.key.keysym.sym]);
+            cout << "key released\n";
+		  }
           break;
       }
     }
-    chip8.step();
+    
+    if(!chip8.waitingForKey()) {
+	  chip8.step();
+	}
+	
+	//TODO run AT 500MHz with the option to speed up or slow down
+	SDL_Delay(1000 / SPEED); //run at "slightly less than 500Hz"
 
   }
   SDL_Quit();

@@ -49,7 +49,10 @@ void Cpu::reset() {
   };
 
   memcpy(&memory, &fonts, 80); //place fonts in memory starting at 0x0000
-
+  wait_for_key = false;
+  wait_for_key_reg = 0;
+  ST = 0;
+  DT = 0;
 }
 
 void Cpu::loadProgram(const string& filename) {
@@ -231,11 +234,11 @@ void Cpu::step() {
     case 0xE:
       switch(kk) {
         case 0x9E:
-          //cout << hex << "SKP V" << dx << '\n';
+          //cout << hex << "SKP V" << d_x << '\n';
           pc += keys[Vx] ? 4 : 2;
           break;
         case 0xA1:
-          //cout << hex << "SKNP V" << dx << '\n';
+          //cout << hex << "SKNP V" << d_x << '\n';
           pc += !keys[Vx] ? 4 : 2;
           break;
         default:
@@ -246,6 +249,15 @@ void Cpu::step() {
 
     case 0xF:
       switch(kk) {
+		case 0x0A:
+		  //cout << hex << "LD V" << d_x << ", K\n";
+		  wait_for_key = true;
+		  wait_for_key_reg = Vx;
+		  break;
+		case 0x18:
+		  //cout << hex << "LD ST, V" << d_x << "\n";
+		  ST = Vx;
+		  break;
         case 0x29:
           //cout << hex << "LD F, V" << d_x << '\n';
           I = Vx * 5;
@@ -287,10 +299,18 @@ uint16_t Cpu::getDWord(uint16_t addr) {
   return (static_cast<uint16_t>(memory[addr]) << 8) | memory[addr + 1];
 }
 
+bool Cpu::waitingForKey() {
+	return wait_for_key;
+}
+
 void Cpu::pressKey(const uint8_t key) {
   keys[key] = true;
 
-  //wait_for_key = false;
+  if(wait_for_key) {
+	v[wait_for_key_reg] = key;
+	wait_for_key = false;
+  }
+	  
 }
 
 void Cpu::releaseKey(const uint8_t key) {
