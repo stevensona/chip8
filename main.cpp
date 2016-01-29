@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
-  const int SPEED = 500; //Hz
+  const int SPEED = 1000; //Hz
 
   if (argc < 2) {
     cout << "no input file specified\n";

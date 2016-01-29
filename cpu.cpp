@@ -226,7 +226,7 @@ void Cpu::step() {
       pc += 2;
       break;
     case 0xD:
-      cout << hex << "DRW V" << d_x << ", V" << d_y << ", nibble\n";
+      cout << hex << "DRW V" << d_x << ", V" << d_y << ", size\n";
       v[0xF] = display->blit(&memory[I], lsb, Vx, Vy);
       pc += 2;
       break;
