@@ -6,7 +6,7 @@ Simple (work in progress) chip8 emulator written in C++11 using SDL implemented 
 * SDL2
 
 ## How to use
-    $ git clone https://github.com/caryanne/chip8.git
+    $ git clone https://github.com/stevensona/chip8.git
     $ cd chip8
     $ make
     $ ./chip8 <input file>
