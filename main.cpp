@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "display.h"
 #include "cpu.h"
 

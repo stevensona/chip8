@@ -1,7 +1,7 @@
 
 #pragma once
 #include <bitset>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 class Display {
 
